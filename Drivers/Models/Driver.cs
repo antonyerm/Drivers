@@ -21,7 +21,7 @@ namespace Drivers.Models
 		[DataType(DataType.Date)]
 		public DateTime? Birthday { get; set; }
 
-		public virtual ICollection<Car>? Cars { get; set; }
+		public virtual List<Car>? Cars { get; set; }
 
     }
 }

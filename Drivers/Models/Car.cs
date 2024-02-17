@@ -17,7 +17,7 @@ namespace Drivers.Models
 		[Display(Name = "Номер")]
 		public string RegistrationNumber { get; set; }
 
-		public virtual ICollection<Driver>? Drivers { get; set; }
+		public virtual List<Driver>? Drivers { get; set; }
 
     }
 }

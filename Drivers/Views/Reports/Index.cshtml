@@ -1,0 +1,68 @@
+﻿@model List<Driver>
+
+@{
+	ViewData["Title"] = "Отчет";
+}
+
+<h2>Общий список водителей</h2>
+
+<table>
+	<thead>
+		<tr class="even-row">
+			<th>Водитель</th>
+			<th>Возраст</th>
+			<th>Марка (Модель)</th>
+			<th>Номер</th>
+		</tr>
+	</thead>
+	<tbody>
+		@for (int i = 0; i < Model.Count(); i++)
+		{
+			<tr class="@(i % 2 == 0 ? String.Empty : "even-row")">
+				<td>
+					@($"{Model[i].LastName} {Model[i].FirstName} {Model[i].MiddleName}")
+				</td>
+				<td>
+					@{
+						var birthDate = Model[i].Birthday;
+						if (birthDate == null)
+						{
+							<span>-</span>
+						}
+						else
+						{
+							var currentDate = DateTime.Now;
+							var age = DateTime.Now.Year - birthDate.Value.Year;
+							if (currentDate.Month < birthDate.Value.Month 
+								|| (currentDate.Month == birthDate.Value.Month && currentDate.Day < birthDate.Value.Day))
+							{
+								age--;
+							}
+							<span>@age</span>
+						}
+					}
+				</td>
+				<td>
+					<table>
+						@foreach (var car in Model[i].Cars)
+						{
+							<tr>
+								<td>@($"{car.Brand} ({car.Model})")</td>
+							</tr>
+						}
+					</table>
+				</td>
+				<td>
+					<table>
+						@foreach (var car in Model[i].Cars)
+						{
+							<tr>
+								<td>@(car.RegistrationNumber)</td>
+							</tr>
+						}
+					</table>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
