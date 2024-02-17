@@ -1,5 +1,6 @@
 ﻿using Drivers.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using System.Net;
 
@@ -108,6 +109,83 @@ namespace Drivers.Controllers
 			
 			return View("OperationComplete");
 		}
+
+		[HttpGet]
+		public IActionResult AssignCar(int id)
+		{
+			var cars = new List<Car>()
+			{
+				new Car()
+				{
+					Id = 1,
+					Brand = "Kia",
+					Model = "Rio",
+					RegistrationNumber = "02HGA215"
+				},
+				new Car()
+				{
+					Id = 2,
+					Brand = "Audi",
+					Model = "100",
+					RegistrationNumber = "01ABC365"
+				},
+				new Car()
+				{
+					Id = 3,
+					Brand = "Toyota",
+					Model = "Camry",
+					RegistrationNumber = "09TGA918"
+				},
+				new Car()
+				{
+					Id = 4,
+					Brand = "Renault",
+					Model = "Logan",
+					RegistrationNumber = "13BCD846"
+				},
+				new Car()
+				{
+					Id = 5,
+					Brand = "Audi",
+					Model = "100",
+					RegistrationNumber = "01DHA498"
+				}
+			};
+
+			var carAssignmentModel = new CarAssignmentModel();
+			foreach (var car in cars)
+			{
+				carAssignmentModel.CarListOptions.Add(new SelectListItem(
+					text: $"{car.RegistrationNumber} {car.Brand} {car.Model}",
+					value: car.Id.ToString()
+				));
+			}
+
+			ViewBag.DriverId = id;
+			return View(carAssignmentModel);
+		}
+
+		[HttpPost]
+		public IActionResult AssignCar(int driverId, int selectedCarId)
+		{
+			// DriversServices.AssignCarToDriver(id, id);
+			// if response is 200, then 
+			var status = HttpStatusCode.OK;
+			/////
+
+			if (status == HttpStatusCode.OK)
+			{
+				ViewBag.UserAlert = "Операция добавления автомобиля водителю успешно выполнена.";
+			}
+			else
+			{
+				ViewBag.UserAlert = "Произошла ошибка. Операция добавления автомобиля водителю не выполнена.";
+			}
+
+			return View("OperationComplete");
+		}
+
+
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
