@@ -37,6 +37,8 @@
 				</div>
 				<div>
 					@Html.ActionLink("Дать автомобиль", "AssignCar", "Drivers", new {id = Model[i].Id})
+				</div><div>
+					@Html.ActionLink("Открепить автомобиль", "UnassignCar", "Drivers", new {id = Model[i].Id})
 				</div>
 			</td>
 		</tr>

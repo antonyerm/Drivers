@@ -113,7 +113,9 @@ namespace Drivers.Controllers
 		[HttpGet]
 		public IActionResult AssignCar(int id)
 		{
-			var cars = new List<Car>()
+			var driverId = id;
+			// TODO repository request
+			var allCars = new List<Car>()
 			{
 				new Car()
 				{
@@ -151,6 +153,9 @@ namespace Drivers.Controllers
 					RegistrationNumber = "01DHA498"
 				}
 			};
+			// TODO repository request
+			var existingCarsOfDriver = new List<int>() { 1, 2 };
+			var cars = allCars.Where(x => !existingCarsOfDriver.Contains(x.Id)).ToList();
 
 			var carAssignmentModel = new CarAssignmentModel();
 			foreach (var car in cars)
@@ -161,7 +166,7 @@ namespace Drivers.Controllers
 				));
 			}
 
-			ViewBag.DriverId = id;
+			ViewBag.DriverId = driverId;
 			return View(carAssignmentModel);
 		}
 
@@ -180,6 +185,62 @@ namespace Drivers.Controllers
 			else
 			{
 				ViewBag.UserAlert = "Произошла ошибка. Операция добавления автомобиля водителю не выполнена.";
+			}
+
+			return View("OperationComplete");
+		}
+
+		[HttpGet]
+		public IActionResult UnassignCar(int id)
+		{
+			var driverId = id;
+			// TODO repository request
+			var existingCarsOfDriver = new List<Car>()
+			{
+				new Car()
+				{
+					Id = 1,
+					Brand = "Kia",
+					Model = "Rio",
+					RegistrationNumber = "02HGA215"
+				},
+				new Car()
+				{
+					Id = 2,
+					Brand = "Audi",
+					Model = "100",
+					RegistrationNumber = "01ABC365"
+				}
+			};
+
+			var carAssignmentModel = new CarAssignmentModel();
+			foreach (var car in existingCarsOfDriver)
+			{
+				carAssignmentModel.CarListOptions.Add(new SelectListItem(
+					text: $"{car.RegistrationNumber} {car.Brand} {car.Model}",
+					value: car.Id.ToString()
+				));
+			}
+
+			ViewBag.DriverId = driverId;
+			return View(carAssignmentModel);
+		}
+
+		[HttpPost]
+		public IActionResult UnassignCar(int driverId, int selectedCarId)
+		{
+			// DriversServices.UnassignCarToDriver(id, id);
+			// if response is 200, then 
+			var status = HttpStatusCode.OK;
+			/////
+
+			if (status == HttpStatusCode.OK)
+			{
+				ViewBag.UserAlert = "Операция открепления автомобиля от водителя успешно выполнена.";
+			}
+			else
+			{
+				ViewBag.UserAlert = "Произошла ошибка. Операция открепления автомобиля от водителя не выполнена.";
 			}
 
 			return View("OperationComplete");

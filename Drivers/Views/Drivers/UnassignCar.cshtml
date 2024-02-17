@@ -1,0 +1,16 @@
+﻿@model CarAssignmentModel
+
+@{
+	ViewData["Title"] = "Открепление автомобиля от водителя";
+}
+
+<div class="panel">
+	<form method="post" asp-controller="Drivers" asp-action="UnassignCar">
+		<p>
+			<select asp-for="@Model.SelectedCarId" asp-items="@Model.CarListOptions"></select>
+		</p>
+		<input type="hidden" asp-for="DriverId" value="@ViewBag.DriverId"/>
+		
+		<button type="submit">Открепить автомобиль от водителя</button>
+	</form>
+</div>
