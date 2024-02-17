@@ -1,16 +1,44 @@
-﻿@{
+﻿@model List<Driver>
+
+@{
 	ViewData["Title"] = "Водители";
 }
 
-<div>
-	@Html.ActionLink("Добавить", "Add")
+<div class="panel">
+	<form method="get" action="~/Drivers/Add">
+		<button type="submit">Добавить водителя</button>
+	</form>
 </div>
-<div>
-	@Html.ActionLink("Удалить", "Delete")
-</div>
-<div>
-	@Html.ActionLink("Изменить", "Modify")
-</div>
-<div>
-	@Html.ActionLink("Дать список", "List")
-</div>
+
+
+<table>
+	<tr class="even-row">
+		<th>Id</th>
+		<th>Фамилия</th>
+		<th>Имя</th>
+		<th>Отчество</th>
+		<th>День рождения</th>
+		<th>Действие</th>
+	</tr>
+	@for (int i = 0; i < Model.Count(); i++)
+	{
+		<tr class="@(i % 2 == 0 ? String.Empty : "even-row")">
+			<td>@Model[i].Id</td>
+			<td>@Model[i].LastName</td>
+			<td>@Model[i].FirstName</td>
+			<td>@Model[i].MiddleName</td>
+			<td>@(Model[i].Birthday?.ToString("d") ?? String.Empty)</td>
+			<td>
+				<div>
+					@Html.ActionLink("Удалить", "Delete", "Drivers", new {id = Model[i].Id})
+				</div>
+				<div>
+					@Html.ActionLink("Изменить", "Edit", "Drivers", new {id = Model[i].Id})
+				</div>
+				<div>
+					@Html.ActionLink("Дать автомобиль", "AssignCar", "Drivers", new {id = Model[i].Id})
+				</div>
+			</td>
+		</tr>
+	}
+</table>

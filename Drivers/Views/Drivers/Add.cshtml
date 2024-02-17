@@ -1,8 +1,31 @@
-﻿@{
+﻿@model Driver
+
+@{
 	ViewData["Title"] = "Добавление водителя";
 }
 
-<div>
-	@Html.  ("Добавить", "Add")
+<div class="panel">
+	<form method="post" action="~/Drivers/Add">
+		<p>
+			<label asp-for="@Model.FirstName"></label>
+			<input asp-for="@Model.FirstName" />
+			<span asp-validation-for="@Model.FirstName"></span>
+		</p>
+		<p>
+			<label asp-for="@Model.LastName"></label>
+			<input asp-for="@Model.LastName" />
+			<span asp-validation-for="@Model.LastName"></span>
+		</p>
+		<p>
+			<label asp-for="@Model.MiddleName"></label>
+			<input asp-for="@Model.MiddleName" />
+			<span asp-validation-for="@Model.MiddleName"></span>
+		</p>
+		<p>
+			<label asp-for="@Model.Birthday"></label>
+			<input asp-for="@Model.Birthday" />
+			<span asp-validation-for="@Model.Birthday"></span>
+		</p>
+		<button type="submit">Добавить водителя</button>
+	</form>
 </div>
-

@@ -1,7 +1,14 @@
-﻿namespace Repository
+﻿using System.Data.Entity;
+
+namespace Repository
 {
-	public class Class1
+	public class DriversDbContext : DbContext
 	{
+		public DriversDbContext()
+		{
+
+		}
+
 
 	}
 }
