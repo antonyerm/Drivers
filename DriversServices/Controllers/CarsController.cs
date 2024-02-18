@@ -8,7 +8,7 @@ using Repository.Models;
 namespace DriversServices.Controllers
 {
 	[ApiController]
-	[Route("[controller]")]
+	[Route("api/[controller]")]
 	public class CarsController : ControllerBase
 	{
 		private readonly ILogger<DriversController> _logger;

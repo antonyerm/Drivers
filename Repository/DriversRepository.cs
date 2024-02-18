@@ -20,27 +20,29 @@ namespace Repository
 
 		private void Seed()
 		{
+			List<Car> cars = new List<Car>();
+			List<Driver> drivers = new List<Driver>();
+
 			if (!_context.Drivers.Any())
 			{
-				var drivers = new List<Driver>()
-				{
+				drivers.Add(
 					new Driver()
 					{
 						Id = 1,
 						FirstName = "John",
 						LastName = "Lennon",
 						MiddleName = "W.",
-						Birthday = new DateTime(2012,12,05)
-					},
+						Birthday = new DateTime(2012, 12, 05)
+					});
+				drivers.Add(
 					new Driver()
 					{
 						Id = 2,
 						FirstName = "Paul",
 						LastName = "McCartney",
 						MiddleName = String.Empty,
-						Birthday = new DateTime(1967,12,05)
-					}
-				};
+						Birthday = new DateTime(1967, 12, 05)
+					});
 
 				_context.Drivers.AddRange(drivers);
 				_context.SaveChanges();
@@ -48,46 +50,71 @@ namespace Repository
 
 			if (!_context.Cars.Any())
 			{
-				var cars = new List<Car>()
-				{
+				cars.Add(
 					new Car()
 					{
 						Id = 1,
 						Brand = "Kia",
 						Model = "Rio",
 						RegistrationNumber = "02HGA215"
-					},
+					});
+				cars.Add(
 					new Car()
 					{
 						Id = 2,
 						Brand = "Audi",
 						Model = "100",
 						RegistrationNumber = "01ABC365"
-					},
+					});
+				cars.Add(
 					new Car()
 					{
 						Id = 3,
 						Brand = "Toyota",
 						Model = "Camry",
 						RegistrationNumber = "09TGA918"
-					},
+					});
+				cars.Add(
 					new Car()
 					{
 						Id = 4,
 						Brand = "Renault",
 						Model = "Logan",
 						RegistrationNumber = "13BCD846"
-					},
+					});
+				cars.Add(
 					new Car()
 					{
 						Id = 5,
 						Brand = "Audi",
 						Model = "100",
 						RegistrationNumber = "01DHA498"
-					}
-				};
+					});
 
 				_context.Cars.AddRange(cars);
+				_context.SaveChanges();
+			};
+
+
+			if (!_context.DriverCar.Any())
+			{
+				var driver1 = _context.Drivers.First();
+				driver1.Cars = new List<Car>();
+				var driver2 = _context.Drivers.OrderBy(d => d.Id).Skip(1).First();
+				driver2.Cars = new List<Car>();
+
+				for (int i = 0; i < cars.Count; i++)
+				{
+					if (i < 2)
+					{
+						driver1.Cars.Add(cars[i]);
+					}
+					else
+					{
+						driver2.Cars.Add(cars[i]);
+					}
+				}
+
 				_context.SaveChanges();
 			}
 		}
@@ -100,7 +127,7 @@ namespace Repository
 
 		public List<Driver> GetDrivers()
 		{
-			var drivers = _context.Drivers;
+			var drivers = _context.Drivers.Include("Cars");
 			return drivers.ToList();
 		}
 
@@ -128,10 +155,18 @@ namespace Repository
 
 		public Driver UpdateDriver(Driver driver)
 		{
-			_context.Drivers.AddOrUpdate(driver);
-			_context.SaveChanges();
+			var existingDriver = _context.Drivers.Find(driver.Id);
+			if (existingDriver != null)
+			{
+				existingDriver.FirstName = driver.FirstName;
+				existingDriver.LastName = driver.LastName;
+				existingDriver.MiddleName = driver.MiddleName;
+				existingDriver.Birthday = driver.Birthday;
 
-			return driver;
+				_context.SaveChanges();
+			}
+			
+			return existingDriver;
 		}
 
 		public bool BatchDeleteCars()

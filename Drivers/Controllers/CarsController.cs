@@ -1,4 +1,5 @@
 ﻿using Drivers.Models;
+using Drivers.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
@@ -8,65 +9,27 @@ namespace Drivers.Controllers
 {
 	public class CarsController : Controller
 	{
-		private readonly ILogger<HomeController> _logger;
+		private readonly ILogger<CarsController> _logger;
+		private readonly ApiCommunications _communications;
 
-		public CarsController(ILogger<HomeController> logger)
+		public CarsController(ILogger<CarsController> logger)
 		{
 			_logger = logger;
+			_communications = new ApiCommunications("cars");
 		}
 
 		public IActionResult Index()
 		{
-			var cars = new List<Car>()
-			{
-				new Car()
-				{
-					Id = 1,
-					Brand = "Kia",
-					Model = "Rio",
-					RegistrationNumber = "02HGA215"
-				},
-				new Car()
-				{
-					Id = 2,
-					Brand = "Audi",
-					Model = "100",
-					RegistrationNumber = "01ABC365"
-				},
-				new Car()
-				{
-					Id = 3,
-					Brand = "Toyota",
-					Model = "Camry",
-					RegistrationNumber = "09TGA918"
-				},
-				new Car()
-				{
-					Id = 4,
-					Brand = "Renault",
-					Model = "Logan",
-					RegistrationNumber = "13BCD846"
-				},
-				new Car()
-				{
-					Id = 5,
-					Brand = "Audi",
-					Model = "100",
-					RegistrationNumber = "01DHA498"
-				}
-			};
+			var cars = _communications.GetCars();
 
 			return View(cars);
 		}
 
 		public IActionResult BatchDelete()
 		{
-			// DriversServices.CarsBatchDelete()
-			// if respond is 200
-			var status = HttpStatusCode.OK;
-			/////
+			var areDeletedSuccessfull = _communications.BatchDeleteCars();
 
-			if (status == HttpStatusCode.OK)
+			if (areDeletedSuccessfull)
 			{
 				ViewBag.UserAlert = "Операция удаление всех машин успешно выполнена.";
 			}

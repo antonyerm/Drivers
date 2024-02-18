@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Repository.Models
 {
@@ -12,6 +13,7 @@ namespace Repository.Models
 
 		public string RegistrationNumber { get; set; }
 
+		[JsonIgnore]
 		public virtual List<Driver>? Drivers { get; set; }
 
     }

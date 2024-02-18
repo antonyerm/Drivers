@@ -8,7 +8,7 @@ using Repository.Models;
 namespace DriversServices.Controllers
 {
 	[ApiController]
-	[Route("[controller]")]
+	[Route("api/[controller]")]
 	public class DriversController : ControllerBase
 	{
 		private readonly ILogger<DriversController> _logger;
@@ -65,8 +65,9 @@ namespace DriversServices.Controllers
 			return Ok(driversDto);
 		}
 
-		[HttpPut]
-		public ActionResult<Driver> Create(DriverDto driver)
+		[HttpPost]
+		[Route("")]
+		public ActionResult<Driver> Create([FromBody] DriverDto driver)
 		{
 			var newDriver = _driversRepository.CreateDriver(_mapper.Map<Driver>(driver));
 
@@ -79,6 +80,7 @@ namespace DriversServices.Controllers
 		}
 
 		[HttpDelete]
+		[Route("{id}")]
 		public ActionResult DeleteDriver(int id)
 		{
 			var isSuccess = _driversRepository.DeleteDriver(id);

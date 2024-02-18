@@ -1,4 +1,5 @@
 ﻿using Drivers.Models;
+using Drivers.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
@@ -9,34 +10,17 @@ namespace Drivers.Controllers
 	public class DriversController : Controller
 	{
 		private readonly ILogger<DriversController> _logger;
+		private readonly ApiCommunications _communications;
 
 		public DriversController(ILogger<DriversController> logger)
 		{
 			_logger = logger;
+			_communications = new ApiCommunications("drivers");
 		}
 
 		public IActionResult Index()
 		{
-			var drivers = new List<Driver>()
-			{
-				new Driver()
-				{
-					Id = 1,
-					FirstName = "John",
-					LastName = "Smith",
-					MiddleName = "K.",
-					Birthday = new DateTime(2012,12,05)
-				},
-				new Driver()
-				{
-					Id = 2,
-					FirstName = "Paul",
-					LastName = "McCarney",
-					MiddleName = "K.",
-					Birthday = new DateTime(1967,12,05)
-				}
-			};
-
+			var drivers = _communications.GetDrivers();
 			return View(drivers);
 		}
 
@@ -54,12 +38,9 @@ namespace Drivers.Controllers
 				return View();
 			}
 
-			// DriversServices.AddDriver(driver);
-			// if response is 200, then 
-			var status = HttpStatusCode.OK;
-			/////
-
-			if (status == HttpStatusCode.OK)
+			var uriOfNewDriver = _communications.CreateDriver(driver);
+			
+			if (uriOfNewDriver != null)
 			{
 				ViewBag.UserAlert = "Операция добавление водителя успешно выполнена.";
 			}
@@ -73,12 +54,9 @@ namespace Drivers.Controllers
 
 		public IActionResult Delete(int id)
 		{
-			// DriversServices.DeleteDriver(id);
-			// if response is 200, then 
-			var status = HttpStatusCode.OK;
-			/////
+			var isDeletedSuccessfully = _communications.DeleteDriver(id);
 
-			if (status == HttpStatusCode.OK)
+			if (isDeletedSuccessfully)
 			{
 				ViewBag.UserAlert = "Операция удаление водителя успешно выполнена.";
 			}
@@ -91,14 +69,30 @@ namespace Drivers.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Edit(Driver driver)
+		public IActionResult Update(int id)
 		{
-			// DriversServices.UpdateDriver(driver);
-			// if response is 200, then 
-			var status = HttpStatusCode.OK;
-			/////
+			var driver = _communications.GetDriverById(id);
+			if (driver == null)
+			{
+				ViewBag.UserAlert = "Произошла ошибка. Операция изменение водителя не выполнена.";
+				return View("OperationComplete");
+			}
 
-			if (status == HttpStatusCode.OK)
+			ViewBag.DriverId = id;
+			return View(driver);
+		}
+
+		[HttpPost]
+		public IActionResult Update(Driver driver)
+		{
+			if (!ModelState.IsValid)
+			{
+				return View();
+			}
+
+			var updatedDriver = _communications.UpdateDriver(driver);
+
+			if (updatedDriver != null)
 			{
 				ViewBag.UserAlert = "Операция изменение водителя успешно выполнена.";
 			}
@@ -180,11 +174,11 @@ namespace Drivers.Controllers
 
 			if (status == HttpStatusCode.OK)
 			{
-				ViewBag.UserAlert = "Операция добавления автомобиля водителю успешно выполнена.";
+				ViewBag.UserAlert = "Операция прикрепления автомобиля водителю успешно выполнена.";
 			}
 			else
 			{
-				ViewBag.UserAlert = "Произошла ошибка. Операция добавления автомобиля водителю не выполнена.";
+				ViewBag.UserAlert = "Произошла ошибка. Операция прикрепления автомобиля водителю не выполнена.";
 			}
 
 			return View("OperationComplete");

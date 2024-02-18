@@ -33,10 +33,10 @@
 					@Html.ActionLink("Удалить", "Delete", "Drivers", new {id = Model[i].Id})
 				</div>
 				<div>
-					@Html.ActionLink("Изменить", "Edit", "Drivers", new {id = Model[i].Id})
+					@Html.ActionLink("Изменить", "Update", "Drivers", new {id = Model[i].Id})
 				</div>
 				<div>
-					@Html.ActionLink("Дать автомобиль", "AssignCar", "Drivers", new {id = Model[i].Id})
+					@Html.ActionLink("Прикрепить автомобиль", "AssignCar", "Drivers", new {id = Model[i].Id})
 				</div><div>
 					@Html.ActionLink("Открепить автомобиль", "UnassignCar", "Drivers", new {id = Model[i].Id})
 				</div>

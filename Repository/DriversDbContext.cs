@@ -14,6 +14,8 @@ namespace Repository
 
 		public DbSet<Car> Cars { get; set; }
 
+		public DbSet<DriverCar> DriverCar { get; set; }
+
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Driver>()
@@ -49,7 +51,16 @@ namespace Repository
 
 			modelBuilder.Entity<Driver>()
 				.HasMany(d => d.Cars)
-				.WithMany(c => c.Drivers);
+				.WithMany(c => c.Drivers)
+				.Map(dc =>
+				{
+					dc.MapLeftKey("DriverId");
+					dc.MapRightKey("CarId");
+					dc.ToTable("DriverCar");
+				});
+
+			modelBuilder.Entity<DriverCar>()
+				.HasKey(dc => new { dc.DriverId, dc.CarId });
 
 			base.OnModelCreating(modelBuilder);
 		}

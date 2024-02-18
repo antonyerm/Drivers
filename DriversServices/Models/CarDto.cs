@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace DriverServices.Models
 {
@@ -12,6 +13,7 @@ namespace DriverServices.Models
 
 		public string RegistrationNumber { get; set; }
 
+		[JsonIgnore]
 		public virtual List<DriverDto> Drivers { get; set; }
 
     }
