@@ -25,6 +25,7 @@ namespace DriversServices.Controllers
 		}
 
 		[HttpDelete]
+		[Route("")]
 		public ActionResult BatchDeleteCars()
 		{
 			var isSuccess = _driversRepository.BatchDeleteCars();
@@ -36,6 +37,31 @@ namespace DriversServices.Controllers
 			{
 				return NotFound();
 			}
+		}
+
+		[HttpGet]
+		[Route("")]
+		public ActionResult<List<CarDto>> Get()
+		{
+			var allCars = _driversRepository.GetCars();
+			List<CarDto> carsDto = null;
+
+			foreach (var car in allCars)
+			{
+				if (carsDto == null)
+				{
+					carsDto = new List<CarDto>();
+				}
+
+				carsDto.Add(_mapper.Map<CarDto>(car));
+			}
+
+			if (carsDto == null)
+			{
+				return NotFound();
+			}
+
+			return Ok(carsDto);
 		}
 	}
 }

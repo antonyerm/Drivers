@@ -143,5 +143,48 @@ namespace Repository
 			return true;
 		}
 
+		public List<Car> GetCars()
+		{
+			var cars = _context.Cars;
+			return cars.ToList();
+		}
+
+		public Car AssignCarToDriver(int driverId, int carId)
+		{
+			var car = _context.Cars.FirstOrDefault(c => c.Id == carId);
+			var driver = _context.Drivers.FirstOrDefault(d => d.Id == driverId);
+			if (car == null || driver == null)
+			{
+				return null;
+			}
+
+			_context.Cars.Attach(car);
+			_context.Drivers.Attach(driver);
+			driver.Cars.Add(car);
+			car.Drivers.Add(driver);
+
+			_context.SaveChanges();
+
+			return car;
+		}
+
+		public bool UnassignCarToDriver(int driverId, int carId)
+		{
+			var car = _context.Cars.FirstOrDefault(c => c.Id == carId);
+			var driver = _context.Drivers.FirstOrDefault(d => d.Id == driverId);
+			if (car == null || driver == null)
+			{
+				return false;
+			}
+
+			_context.Cars.Attach(car);
+			_context.Drivers.Attach(driver);
+			driver.Cars.Remove(car);
+			car.Drivers.Remove(driver);
+
+			_context.SaveChanges();
+
+			return true;
+		}
 	}
 }

@@ -92,7 +92,7 @@ namespace DriversServices.Controllers
 			}
 		}
 
-		[HttpPatch]
+		[HttpPut]
 		public ActionResult<Driver> UpdateDriver(Driver driver)
 		{
 			var updatedDriver = _driversRepository.UpdateDriver(driver);
@@ -105,5 +105,33 @@ namespace DriversServices.Controllers
 				return NotFound();
 			}
 		}
+
+		//[HttpPut]
+		//public ActionResult<Car> AssignCar(int driverId, int carId)
+		//{
+		//	var car = _driversRepository.AssignCarToDriver(driverId, carId);
+		//	if (car != null)
+		//	{
+		//		return Ok(car);
+		//	}
+		//	else
+		//	{
+		//		return NotFound();
+		//	}
+		//}
+
+		//[HttpPut]
+		//public ActionResult<Car> UnassignCar(int driverId, int carId)
+		//{
+		//	var isSuccess = _driversRepository.UnassignCarToDriver(driverId, carId);
+		//	if (isSuccess)
+		//	{
+		//		return Ok();
+		//	}
+		//	else
+		//	{
+		//		return NotFound();
+		//	}
+		//}
 	}
 }

@@ -15,5 +15,12 @@ namespace Repository
 		public Driver UpdateDriver(Driver driver);
 
 		public bool BatchDeleteCars();
+
+		public List<Car> GetCars();
+
+
+		public Car AssignCarToDriver(int driverId, int carId);
+
+		public bool UnassignCarToDriver(int driverId, int carId);
 	}
 }
