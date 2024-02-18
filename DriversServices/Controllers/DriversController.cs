@@ -1,7 +1,9 @@
 using AutoMapper;
 using DriverServices.Models;
+using DriversServices.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Repository;
+using Repository.Models;
 
 namespace DriversServices.Controllers
 {
@@ -11,22 +13,97 @@ namespace DriversServices.Controllers
 	{
 		private readonly ILogger<DriversController> _logger;
 		private readonly IMapper _mapper;
+		private readonly IDriversRepository _driversRepository;
 
-		public DriversController(ILogger<DriversController> logger, IMapper mapper)
+		public DriversController(ILogger<DriversController> logger, 
+								 IMapper mapper,
+								 IDriversRepository driversRepository)
 		{
 			_logger = logger;
 			_mapper = mapper;
+			_driversRepository = driversRepository;
 		}
 
 		[HttpGet]
 		[Route("{driverId}")]
-		public DriverDto Get(int driverId)
+		public ActionResult<DriverDto> Get(int driverId)
 		{
-			var repository = new DriversRepository();
-			var driver = repository.GetDriverById(driverId);
+			var driver = _driversRepository.GetDriverById(driverId);
 			var driverDto = _mapper.Map<DriverDto>(driver);
 
-			return driverDto;
+			if (driverDto == null)
+			{
+				return NotFound();
+			}
+
+			return Ok(driverDto);
+		}
+
+		[HttpGet]
+		[Route("")]
+		public ActionResult<List<DriverDto>> Get()
+		{
+			var allDrivers = _driversRepository.GetDrivers();
+			List<DriverDto> driversDto = null;
+
+			foreach (var driver in allDrivers)
+			{
+				if (driversDto == null)
+				{
+					driversDto = new List<DriverDto>();
+				}
+				
+				driversDto.Add(_mapper.Map<DriverDto>(driver));
+
+			}
+
+			if (driversDto == null)
+			{
+				return NotFound();
+			}
+
+			return Ok(driversDto);
+		}
+
+		[HttpPut]
+		public ActionResult<Driver> Create(DriverDto driver)
+		{
+			var newDriver = _driversRepository.CreateDriver(_mapper.Map<Driver>(driver));
+
+			if (newDriver == null)
+			{
+				return NotFound();
+			}
+
+			return Ok(newDriver);
+		}
+
+		[HttpDelete]
+		public ActionResult DeleteDriver(int id)
+		{
+			var isSuccess = _driversRepository.DeleteDriver(id);
+			if (isSuccess)
+			{
+				return Ok();
+			}
+			else
+			{
+				return NotFound();
+			}
+		}
+
+		[HttpPatch]
+		public ActionResult<Driver> UpdateDriver(Driver driver)
+		{
+			var updatedDriver = _driversRepository.UpdateDriver(driver);
+			if (updatedDriver != null)
+			{
+				return Ok(updatedDriver);
+			}
+			else
+			{
+				return NotFound();
+			}
 		}
 	}
 }

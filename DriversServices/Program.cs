@@ -1,4 +1,5 @@
 using DriversServices.Configuration;
+using Repository;
 
 namespace DriversServices
 {
@@ -15,6 +16,7 @@ namespace DriversServices
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 			builder.Services.AddAutoMapper(typeof(MapperConfiguration));
+			builder.Services.AddSingleton<IDriversRepository, DriversRepository>();
 
 			var app = builder.Build();
 

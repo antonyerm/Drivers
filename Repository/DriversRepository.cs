@@ -1,13 +1,15 @@
 ﻿using Repository.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Repository
 {
-	public class DriversRepository
+	public class DriversRepository : IDriversRepository
 	{
 		DriversDbContext _context;
 		public DriversRepository()
@@ -90,16 +92,56 @@ namespace Repository
 			}
 		}
 
-		public Driver GetDriverFirstOrDefault(int id)
+		public Driver GetDriverById(int driverId)
 		{
-			var driver = _context.Drivers.FirstOrDefault();
+			var driver = _context.Drivers.FirstOrDefault(x => x.Id == driverId);
 			return driver;
 		}
 
-		public Driver GetDriverById(int id)
+		public List<Driver> GetDrivers()
 		{
-			var driver = _context.Drivers.FirstOrDefault(x => x.Id == id);
+			var drivers = _context.Drivers;
+			return drivers.ToList();
+		}
+
+		public Driver CreateDriver(Driver driver)
+		{
+			_context.Drivers.Add(driver);
+			_context.SaveChanges();
 			return driver;
 		}
+
+		public bool DeleteDriver(int driverId)
+		{
+			var driver = GetDriverById(driverId);
+			if (driver != null)
+			{
+				_context.Drivers.Remove(driver);
+				_context.SaveChanges();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public Driver UpdateDriver(Driver driver)
+		{
+			_context.Drivers.AddOrUpdate(driver);
+			_context.SaveChanges();
+
+			return driver;
+		}
+
+		public bool BatchDeleteCars()
+		{
+			var allCars = _context.Cars;
+			_context.Cars.RemoveRange(allCars);
+			_context.SaveChanges();
+
+			return true;
+		}
+
 	}
 }

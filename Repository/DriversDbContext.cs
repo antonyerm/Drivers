@@ -18,7 +18,8 @@ namespace Repository
 		{
 			modelBuilder.Entity<Driver>()
 				.HasKey(d => d.Id)
-				.Property(d => d.FirstName).HasMaxLength(400).IsRequired();
+				.Property(d => d.FirstName).HasMaxLength(400).IsRequired()
+				.HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
 
 			modelBuilder.Entity<Driver>()
 				.Property(d => d.LastName).HasMaxLength(400).IsRequired();
@@ -31,7 +32,8 @@ namespace Repository
 
 			modelBuilder.Entity<Car>()
 				.HasKey(c => c.Id)
-				.Property(c => c.Brand).IsRequired();
+				.Property(c => c.Brand).IsRequired()
+				.HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
 
 			modelBuilder.Entity<Car>()
 				.Property(c => c.RegistrationNumber).HasMaxLength(400).IsRequired();
