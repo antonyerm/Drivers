@@ -38,9 +38,9 @@ namespace Drivers.Controllers
 				return View();
 			}
 
-			var uriOfNewDriver = _communications.CreateDriver(driver);
+			var newDriver = _communications.CreateDriver(driver);
 			
-			if (uriOfNewDriver != null)
+			if (newDriver != null)
 			{
 				ViewBag.UserAlert = "Операция добавление водителя успешно выполнена.";
 			}
@@ -107,48 +107,11 @@ namespace Drivers.Controllers
 		[HttpGet]
 		public IActionResult AssignCar(int id)
 		{
-			var driverId = id;
-			// TODO repository request
-			var allCars = new List<Car>()
-			{
-				new Car()
-				{
-					Id = 1,
-					Brand = "Kia",
-					Model = "Rio",
-					RegistrationNumber = "02HGA215"
-				},
-				new Car()
-				{
-					Id = 2,
-					Brand = "Audi",
-					Model = "100",
-					RegistrationNumber = "01ABC365"
-				},
-				new Car()
-				{
-					Id = 3,
-					Brand = "Toyota",
-					Model = "Camry",
-					RegistrationNumber = "09TGA918"
-				},
-				new Car()
-				{
-					Id = 4,
-					Brand = "Renault",
-					Model = "Logan",
-					RegistrationNumber = "13BCD846"
-				},
-				new Car()
-				{
-					Id = 5,
-					Brand = "Audi",
-					Model = "100",
-					RegistrationNumber = "01DHA498"
-				}
-			};
-			// TODO repository request
-			var existingCarsOfDriver = new List<int>() { 1, 2 };
+			_communications.ApiName = "cars";
+			var allCars = _communications.GetCars();
+			_communications.ApiName = "drivers";
+			var driver = _communications.GetDriverById(id);
+			var existingCarsOfDriver = driver.Cars.Select(x => x.Id);
 			var cars = allCars.Where(x => !existingCarsOfDriver.Contains(x.Id)).ToList();
 
 			var carAssignmentModel = new CarAssignmentModel();
@@ -160,19 +123,16 @@ namespace Drivers.Controllers
 				));
 			}
 
-			ViewBag.DriverId = driverId;
+			ViewBag.DriverId = id;
 			return View(carAssignmentModel);
 		}
 
 		[HttpPost]
 		public IActionResult AssignCar(int driverId, int selectedCarId)
 		{
-			// DriversServices.AssignCarToDriver(id, id);
-			// if response is 200, then 
-			var status = HttpStatusCode.OK;
-			/////
+			var assignedCar = _communications.AssignCar(driverId, selectedCarId);
 
-			if (status == HttpStatusCode.OK)
+			if (assignedCar != null)
 			{
 				ViewBag.UserAlert = "Операция прикрепления автомобиля водителю успешно выполнена.";
 			}
@@ -188,24 +148,8 @@ namespace Drivers.Controllers
 		public IActionResult UnassignCar(int id)
 		{
 			var driverId = id;
-			// TODO repository request
-			var existingCarsOfDriver = new List<Car>()
-			{
-				new Car()
-				{
-					Id = 1,
-					Brand = "Kia",
-					Model = "Rio",
-					RegistrationNumber = "02HGA215"
-				},
-				new Car()
-				{
-					Id = 2,
-					Brand = "Audi",
-					Model = "100",
-					RegistrationNumber = "01ABC365"
-				}
-			};
+			var driver = _communications.GetDriverById(id);
+			var existingCarsOfDriver = driver.Cars;
 
 			var carAssignmentModel = new CarAssignmentModel();
 			foreach (var car in existingCarsOfDriver)
@@ -223,12 +167,9 @@ namespace Drivers.Controllers
 		[HttpPost]
 		public IActionResult UnassignCar(int driverId, int selectedCarId)
 		{
-			// DriversServices.UnassignCarToDriver(id, id);
-			// if response is 200, then 
-			var status = HttpStatusCode.OK;
-			/////
+			var isUnassignedSuccessfully = _communications.UnssignCar(driverId, selectedCarId);
 
-			if (status == HttpStatusCode.OK)
+			if (isUnassignedSuccessfully)
 			{
 				ViewBag.UserAlert = "Операция открепления автомобиля от водителя успешно выполнена.";
 			}

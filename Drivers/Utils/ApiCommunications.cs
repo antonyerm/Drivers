@@ -1,40 +1,51 @@
 ﻿using Drivers.Models;
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Drivers.Utils
 {
 	public class ApiCommunications
 	{
+		public string ApiName { get; set; }
+		public Uri ApiFullUri => new Uri($@"{_client.BaseAddress}{ApiName}");
 		private readonly HttpClient _client;
 
-		public ApiCommunications(string apiSection)
+		public ApiCommunications(string apiName)
 		{
 			_client = new HttpClient();
-			_client.BaseAddress = new Uri($@"http://localhost:5027/api/{apiSection}");
+			_client.BaseAddress = new Uri($@"http://localhost:5027/api/");
+			ApiName = apiName;
 		}
 
-		public Uri CreateDriver(Driver driver)
+		public Driver CreateDriver(Driver driver)
 		{
+			Driver newDriver = null;
 			var options = new JsonSerializerOptions
 			{
 				PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 				PropertyNameCaseInsensitive = true
 			};
-			HttpResponseMessage response = _client.PostAsJsonAsync(_client.BaseAddress, driver, options).Result;
-			return response.Headers.Location;
+			HttpResponseMessage response = _client.PostAsJsonAsync(ApiFullUri.OriginalString, driver, options).Result;
+			if (response.IsSuccessStatusCode)
+			{
+				var content = response.Content.ReadAsStringAsync().Result;
+				newDriver = JsonSerializer.Deserialize<Driver>(content, options);
+			}
+
+			return newDriver;
 		}
 
 		public bool DeleteDriver(int id)
 		{
-			HttpResponseMessage response = _client.DeleteAsync($"{_client.BaseAddress}/{id}").Result;
+			HttpResponseMessage response = _client.DeleteAsync($"{ApiFullUri}/{id}").Result;
 			return response.StatusCode == HttpStatusCode.OK;
 		}
 
 		public Driver UpdateDriver(Driver driver)
 		{
 			Driver updatedDriver = null;
-			HttpResponseMessage response = _client.PutAsJsonAsync(_client.BaseAddress, driver).Result;
+			HttpResponseMessage response = _client.PutAsJsonAsync(ApiFullUri, driver).Result;
 			if (response.IsSuccessStatusCode)
 			{
 				var content = response.Content.ReadAsStringAsync().Result;
@@ -52,7 +63,7 @@ namespace Drivers.Utils
 		public List<Driver> GetDrivers()
 		{
 			var drivers = new List<Driver>();
-			var response = _client.GetAsync(_client.BaseAddress).Result;
+			var response = _client.GetAsync(ApiFullUri).Result;
 			if (response.IsSuccessStatusCode)
 			{
 				var content = response.Content.ReadAsStringAsync().Result;
@@ -70,7 +81,7 @@ namespace Drivers.Utils
 		public Driver GetDriverById(int id)
 		{
 			Driver driver = null;
-			var response = _client.GetAsync($"{_client.BaseAddress}/{id}").Result;
+			var response = _client.GetAsync($"{ApiFullUri}/{id}").Result;
 			if (response.IsSuccessStatusCode)
 			{
 				var content = response.Content.ReadAsStringAsync().Result;
@@ -88,7 +99,7 @@ namespace Drivers.Utils
 		public List<Car> GetCars()
 		{
 			var cars = new List<Car>();
-			var response = _client.GetAsync(_client.BaseAddress).Result;
+			var response = _client.GetAsync(ApiFullUri).Result;
 			if (response.IsSuccessStatusCode)
 			{
 				var content = response.Content.ReadAsStringAsync().Result;
@@ -105,7 +116,33 @@ namespace Drivers.Utils
 
 		public bool BatchDeleteCars()
 		{
-			HttpResponseMessage response = _client.DeleteAsync($"{_client.BaseAddress}").Result;
+			HttpResponseMessage response = _client.DeleteAsync(ApiFullUri).Result;
+			return response.StatusCode == HttpStatusCode.OK;
+		}
+
+		public Car AssignCar(int driverId, int carId)
+		{
+			Car assignedCar = null;
+			var apiAdditionalPath = $"/{driverId}/cars/{carId}";
+			HttpResponseMessage response = _client.PutAsync(ApiFullUri + apiAdditionalPath, null).Result;
+			if (response.IsSuccessStatusCode)
+			{
+				var content = response.Content.ReadAsStringAsync().Result;
+				var options = new JsonSerializerOptions
+				{
+					PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+					PropertyNameCaseInsensitive = true
+				};
+				assignedCar = JsonSerializer.Deserialize<Car>(content, options);
+			}
+
+			return assignedCar;
+		}
+
+		public bool UnssignCar(int driverId, int carId)
+		{
+			var apiAdditionalPath = $"/{driverId}/cars/{carId}";
+			HttpResponseMessage response = _client.DeleteAsync(ApiFullUri + apiAdditionalPath).Result;
 			return response.StatusCode == HttpStatusCode.OK;
 		}
 	}

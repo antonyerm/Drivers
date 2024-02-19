@@ -86,8 +86,8 @@ namespace Repository
 					new Car()
 					{
 						Id = 5,
-						Brand = "Audi",
-						Model = "100",
+						Brand = "Bentley",
+						Model = "Flying Spur",
 						RegistrationNumber = "01DHA498"
 					});
 
@@ -193,11 +193,7 @@ namespace Repository
 				return null;
 			}
 
-			_context.Cars.Attach(car);
-			_context.Drivers.Attach(driver);
 			driver.Cars.Add(car);
-			car.Drivers.Add(driver);
-
 			_context.SaveChanges();
 
 			return car;
@@ -212,11 +208,7 @@ namespace Repository
 				return false;
 			}
 
-			_context.Cars.Attach(car);
-			_context.Drivers.Attach(driver);
 			driver.Cars.Remove(car);
-			car.Drivers.Remove(driver);
-
 			_context.SaveChanges();
 
 			return true;

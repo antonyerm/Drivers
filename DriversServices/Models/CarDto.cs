@@ -14,7 +14,7 @@ namespace DriverServices.Models
 		public string RegistrationNumber { get; set; }
 
 		[JsonIgnore]
-		public virtual List<DriverDto> Drivers { get; set; }
+		public virtual List<DriverDto>? Drivers { get; set; }
 
     }
 }

@@ -67,7 +67,7 @@ namespace DriversServices.Controllers
 
 		[HttpPost]
 		[Route("")]
-		public ActionResult<Driver> Create([FromBody] DriverDto driver)
+		public ActionResult<Driver> Create([FromBody] Driver driver)
 		{
 			var newDriver = _driversRepository.CreateDriver(_mapper.Map<Driver>(driver));
 
@@ -108,32 +108,34 @@ namespace DriversServices.Controllers
 			}
 		}
 
-		//[HttpPut]
-		//public ActionResult<Car> AssignCar(int driverId, int carId)
-		//{
-		//	var car = _driversRepository.AssignCarToDriver(driverId, carId);
-		//	if (car != null)
-		//	{
-		//		return Ok(car);
-		//	}
-		//	else
-		//	{
-		//		return NotFound();
-		//	}
-		//}
+		[HttpPut]
+		[Route("{driverId}/cars/{carId}")]
+		public ActionResult<Car> AssignCar(int driverId, int carId)
+		{
+			var car = _driversRepository.AssignCarToDriver(driverId, carId);
+			if (car != null)
+			{
+				return Ok(car);
+			}
+			else
+			{
+				return NotFound();
+			}
+		}
 
-		//[HttpPut]
-		//public ActionResult<Car> UnassignCar(int driverId, int carId)
-		//{
-		//	var isSuccess = _driversRepository.UnassignCarToDriver(driverId, carId);
-		//	if (isSuccess)
-		//	{
-		//		return Ok();
-		//	}
-		//	else
-		//	{
-		//		return NotFound();
-		//	}
-		//}
+		[HttpDelete]
+		[Route("{driverId}/cars/{carId}")]
+		public ActionResult UnassignCar(int driverId, int carId)
+		{
+			var isSuccess = _driversRepository.UnassignCarToDriver(driverId, carId);
+			if (isSuccess)
+			{
+				return Ok();
+			}
+			else
+			{
+				return NotFound();
+			}
+		}
 	}
 }

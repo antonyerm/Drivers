@@ -12,9 +12,9 @@ namespace DriverServices.Models
 
 		public string MiddleName { get; set; }
 
-		public DateTime Birthday { get; set; }
+		public DateTime? Birthday { get; set; }
 
-		public virtual List<CarDto> Cars { get; set; }
+		public virtual List<CarDto>? Cars { get; set; }
 
     }
 }
